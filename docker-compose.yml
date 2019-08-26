@@ -1,0 +1,30 @@
+version: "3.1"
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports: 
+      - 27017:27017
+  mongo_ui:
+    image: mrvautin/adminmongo
+    restart: "always"
+    environment:
+      - CONN_NAME=localmail
+      - DB_HOST=mongo
+      - DB_PORT=27017
+      - HOST=0.0.0.0
+    depends_on:
+      - mongo
+    ports:
+      - 1234:1234
+    links:
+      - mongo
+  local_mail:
+    build:
+      context: .
+    environment:
+      - DB_CONN=mongodb://mongo:27017
+    ports:
+      - 7893:8080
+    depends_on:
+      - mongo
